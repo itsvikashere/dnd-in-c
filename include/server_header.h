@@ -25,7 +25,7 @@ extern const char *log_levels[];
 #define LOG(level, message, ...) printf("[%s] " message "\n", log_levels[level], ##__VA_ARGS__)
 
 void sendToClient(int client_socket, const char *message);
-void handleIncomingCall(int client_socket, int client_id);
+void handleIncomingCall(int client_socket,int my_id, int client_id);
 void newClient(int client_socket, FILE *csv_file, int client_id, char choice, char global, char num_groups[]);
 void openFile(int client_socket, int client_id, char choice, char global, char num_groups[]);
 void processCommand(int client_socket);

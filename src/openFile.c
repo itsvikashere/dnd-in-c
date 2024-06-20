@@ -1,7 +1,6 @@
 #include "../include/server_header.h"
 
 extern const char *log_levels[];
-
 void openFile(int client_socket, int client_id, char choice, char global, char num_groups[]) {
     FILE *csv_file;
     csv_file = fopen("data.csv", "r+"); // opening file for r, w, a

@@ -47,6 +47,7 @@ int main() {
         int target_client_id;
         scanf("%d", &target_client_id);
         getchar();
+	write(client_socket, &client_id, sizeof(choice));
         write(client_socket, &choice, sizeof(choice));
         write(client_socket, &target_client_id, sizeof(target_client_id));
     } else {
