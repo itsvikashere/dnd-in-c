@@ -7,10 +7,18 @@ const char *log_levels[] = {
     "DEBUG"
 };
 
+void *handleClient(void *arg) {
+    int client_socket = *((int *)arg);
+    free(arg);  // Free the dynamically allocated memory for client socket
+    processCommand(client_socket);
+    close(client_socket);
+    pthread_exit(NULL);
+}
+
 int main() {
     int server_socket;
     struct sockaddr_in server_address, client_address;
-    socklen_t addrlen = sizeof(server_address);
+    socklen_t addrlen = sizeof(client_address);
 
     if ((server_socket = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
         LOG(LOG_LEVEL_FATAL, "Socket Failed!");
@@ -34,17 +42,22 @@ int main() {
     LOG(LOG_LEVEL_INFO, "Server listening on port %d...", PORT);
 
     while (1) {
-        int client_socket = accept(server_socket, (struct sockaddr *)&client_address, &addrlen);
-        if (client_socket < 0) {
+        int *client_socket = malloc(sizeof(int));
+        if ((*client_socket = accept(server_socket, (struct sockaddr *)&client_address, &addrlen)) < 0) {
             LOG(LOG_LEVEL_FATAL, "Accept Error!");
             exit(EXIT_FAILURE);
         }
 
-        processCommand(client_socket);
-
-        close(client_socket);
+        pthread_t thread_id;
+        if (pthread_create(&thread_id, NULL, handleClient, (void *)client_socket) != 0) {
+            LOG(LOG_LEVEL_FATAL, "Failed to create thread");
+            free(client_socket);  // Free memory in case of thread creation failure
+            close(*client_socket);
+        }
+        pthread_detach(thread_id);  // Detach thread to free resources when done
     }
 
+    close(server_socket);
     return 0;
 }
 

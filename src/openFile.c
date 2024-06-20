@@ -1,6 +1,7 @@
 #include "../include/server_header.h"
 
 extern const char *log_levels[];
+
 void openFile(int client_socket, int client_id, char choice, char global, char num_groups[]) {
     FILE *csv_file;
     csv_file = fopen("data.csv", "r+"); // opening file for r, w, a
@@ -9,6 +10,7 @@ void openFile(int client_socket, int client_id, char choice, char global, char n
         LOG(LOG_LEVEL_FATAL, "Error opening file!");
         exit(1);
     }
+
     // Check if the client is new
     bool isNewClient = true;
     int stored_client_id;
@@ -17,6 +19,7 @@ void openFile(int client_socket, int client_id, char choice, char global, char n
     char c, g;
     char num[50];
     char line[256]; // Assuming the maximum line length won't exceed 256 characters
+
     while (fgets(line, sizeof(line), csv_file)) {
         int len = strlen(line);
         char *token = strtok(line, ",");

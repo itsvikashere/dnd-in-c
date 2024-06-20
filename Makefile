@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS = -Iinclude -Wall -g
+CFLAGS = -Iinclude -Wall -g -pthread  # Added -pthread for threading
 OBJDIR = obj
 BINDIR = bin
 SRCDIR = src
@@ -15,7 +15,13 @@ SERVER_OBJ = $(SERVER_SRC:$(SRCDIR)/%.c=$(OBJDIR)/%.o)
 CLIENT_BIN = $(BINDIR)/client
 SERVER_BIN = $(BINDIR)/server
 
-all: $(CLIENT_BIN) $(SERVER_BIN)
+all: $(OBJDIR) $(BINDIR) $(CLIENT_BIN) $(SERVER_BIN)
+
+$(OBJDIR):
+	mkdir -p $(OBJDIR)
+
+$(BINDIR):
+	mkdir -p $(BINDIR)
 
 $(CLIENT_BIN): $(CLIENT_OBJ)
 	$(CC) $(CFLAGS) -o $@ $^
@@ -27,5 +33,7 @@ $(OBJDIR)/%.o: $(SRCDIR)/%.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
-	rm -f $(OBJDIR)/*.o $(BINDIR)
+	rm -f $(OBJDIR)/*.o $(BINDIR)/client $(BINDIR)/server  # Only remove binaries, not the directory
+
+.PHONY: all clean
 

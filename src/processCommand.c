@@ -6,12 +6,15 @@ void processCommand(int client_socket) {
     char choice;
     char num_groups[50] = "NA";
     char global = '-';
+
     // Reading client info-----------
-    read(client_socket, &my_id,sizeof(my_id));
-    read(client_socket, &choice, sizeof(choice));
     read(client_socket, &client_id, sizeof(client_id));
+    read(client_socket, &choice, sizeof(choice));
+
     if (choice == 'H') {
-        handleIncomingCall(client_socket,my_id, client_id);
+        int target_client_id;
+        read(client_socket, &target_client_id, sizeof(target_client_id));
+        handleIncomingCall(client_socket, client_id, target_client_id);
     } else {
         if (choice == 'A') {
             read(client_socket, &global, sizeof(global));

@@ -29,8 +29,8 @@ int main() {
     }
 
     int client_id;
-    char choice, global;
-    char num_groups[50];
+    char choice, global = '-';
+    char num_groups[50] = "NA";
 
     LOG(LOG_LEVEL_INFO, "Connection established.\n");
 
@@ -47,7 +47,9 @@ int main() {
         int target_client_id;
         scanf("%d", &target_client_id);
         getchar();
-	write(client_socket, &client_id, sizeof(choice));
+
+        // Send data to server
+        write(client_socket, &client_id, sizeof(client_id));
         write(client_socket, &choice, sizeof(choice));
         write(client_socket, &target_client_id, sizeof(target_client_id));
     } else {
@@ -61,23 +63,20 @@ int main() {
                 getchar();
             }
         }
+
         // Send data to server
-        write(client_socket, &choice, sizeof(choice));
         write(client_socket, &client_id, sizeof(client_id));
-        if (choice == 'A') {
-            write(client_socket, &global, sizeof(global));
-        }
-        if (choice == 'A' && global == 'S') {
-            write(client_socket, &num_groups, sizeof(num_groups));
-        }
+        write(client_socket, &choice, sizeof(choice));
+        write(client_socket, &global, sizeof(global));
+        write(client_socket, &num_groups, sizeof(num_groups));
     }
 
     // Receive and print messages from the server
     char buffer[1024];
     ssize_t bytes_received;
-    while ((bytes_received = read(client_socket, buffer, sizeof(buffer))) > 0) {
-        write(STDOUT_FILENO, buffer, bytes_received); // Print to standard output (console)
-        printf("\n");
+    while ((bytes_received = read(client_socket, buffer, sizeof(buffer) - 1)) > 0) {
+        buffer[bytes_received] = '\0'; // Null-terminate the buffer
+        printf("%s\n", buffer); // Print to standard output (console)
     }
 
     // Close socket
