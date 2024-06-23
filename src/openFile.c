@@ -1,36 +1,31 @@
 #include "../include/server_header.h"
 
-extern const char *log_levels[];
-
 void openFile(int client_socket, int client_id, char choice, char global, char num_groups[]) {
+    pthread_mutex_lock(&file_mutex);
+
     FILE *csv_file;
-    csv_file = fopen("data.csv", "r+"); // opening file for r, w, a
-    // Check if file opened successfully
+    csv_file = fopen("data.csv", "r+");
     if (csv_file == NULL) {
-        LOG(LOG_LEVEL_FATAL, "Error opening file!");
+        LOG(LOG_LEVEL_FATAL, "Error opening file!\n");
+        pthread_mutex_unlock(&file_mutex);
         exit(1);
     }
-
-    // Check if the client is new
     bool isNewClient = true;
     int stored_client_id;
-    rewind(csv_file); // Move file pointer to the beginning
+    rewind(csv_file);
     int id;
     char c, g;
     char num[50];
-    char line[256]; // Assuming the maximum line length won't exceed 256 characters
-
+    char line[256];
     while (fgets(line, sizeof(line), csv_file)) {
         int len = strlen(line);
         char *token = strtok(line, ",");
         if (token != NULL) {
-            // Extract and store client_id
             id = atoi(token);
             if (id == client_id) {
                 isNewClient = false;
                 token = strtok(NULL, ",");
                 if (token != NULL) {
-                    // Extract and store choice
                     c = token[0];
                     if (choice == c) {
                         warningToClient(client_socket, c, choice);
@@ -46,6 +41,8 @@ void openFile(int client_socket, int client_id, char choice, char global, char n
     if (isNewClient) {
         newClient(client_socket, csv_file, client_id, choice, global, num_groups);
     }
-    fclose(csv_file); // file closed
+    fclose(csv_file);
+
+    pthread_mutex_unlock(&file_mutex);
 }
 

@@ -34,5 +34,7 @@ void updateFile(int client_socket, FILE *csv_file, int len, int c, int client_id
 void warningToClient(int client_socket, int c, int choice);
 void *handleClient(void *arg);  // Declare thread function
 
+extern pthread_mutex_t file_mutex;
+
 #endif // SERVER_HEADER_H
 

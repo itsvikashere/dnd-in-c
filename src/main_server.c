@@ -1,4 +1,5 @@
 #include "../include/server_header.h"
+#include <pthread.h>
 
 const char *log_levels[] = {
     "FATAL",
@@ -7,21 +8,23 @@ const char *log_levels[] = {
     "DEBUG"
 };
 
-void *handleClient(void *arg) {
-    int client_socket = *((int *)arg);
-    free(arg);  // Free the dynamically allocated memory for client socket
+pthread_mutex_t file_mutex = PTHREAD_MUTEX_INITIALIZER;
+
+void* handle_client(void* arg) {
+    int client_socket = *(int*)arg;
+    free(arg);
     processCommand(client_socket);
     close(client_socket);
-    pthread_exit(NULL);
+    return NULL;
 }
 
 int main() {
-    int server_socket;
+    int server_socket, *client_socket;
     struct sockaddr_in server_address, client_address;
-    socklen_t addrlen = sizeof(client_address);
+    socklen_t addrlen = sizeof(server_address);
 
     if ((server_socket = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
-        LOG(LOG_LEVEL_FATAL, "Socket Failed!");
+        LOG(LOG_LEVEL_FATAL, "Socket creation failed!\n");
         exit(EXIT_FAILURE);
     }
 
@@ -30,33 +33,31 @@ int main() {
     server_address.sin_port = htons(PORT);
 
     if (bind(server_socket, (struct sockaddr *)&server_address, sizeof(server_address)) < 0) {
-        LOG(LOG_LEVEL_FATAL, "Bind Failed!");
+        LOG(LOG_LEVEL_FATAL, "Bind failed!\n");
         exit(EXIT_FAILURE);
     }
 
     if (listen(server_socket, 3) < 0) {
-        LOG(LOG_LEVEL_FATAL, "Listen Failed!");
+        LOG(LOG_LEVEL_FATAL, "Listen failed!\n");
         exit(EXIT_FAILURE);
     }
 
-    LOG(LOG_LEVEL_INFO, "Server listening on port %d...", PORT);
+    LOG(LOG_LEVEL_INFO, "Server listening on port %d...\n", PORT);
 
     while (1) {
-        int *client_socket = malloc(sizeof(int));
+        client_socket = malloc(sizeof(int));
         if ((*client_socket = accept(server_socket, (struct sockaddr *)&client_address, &addrlen)) < 0) {
-            LOG(LOG_LEVEL_FATAL, "Accept Error!");
+            LOG(LOG_LEVEL_FATAL, "Accept error!\n");
+            free(client_socket);
             exit(EXIT_FAILURE);
         }
 
-        pthread_t thread_id;
-        if (pthread_create(&thread_id, NULL, handleClient, (void *)client_socket) != 0) {
-            LOG(LOG_LEVEL_FATAL, "Failed to create thread");
-            free(client_socket);  // Free memory in case of thread creation failure
-            close(*client_socket);
-        }
-        pthread_detach(thread_id);  // Detach thread to free resources when done
+        pthread_t tid;
+        pthread_create(&tid, NULL, handle_client, client_socket);
+        pthread_detach(tid);
     }
 
+    pthread_mutex_destroy(&file_mutex);
     close(server_socket);
     return 0;
 }
