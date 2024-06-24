@@ -33,13 +33,23 @@ int main() {
     char choice, global = '-';
     char num_groups[50] = "NA";
 
+    system("clear");
     LOG(LOG_LEVEL_INFO, "Connection established.\n");
+        printf("\n=============================\n");
+        printf("   DO NOT DISTURB MENU\n");
+        printf("=============================\n");
 
     printf("Enter client ID: ");
     scanf("%d", &client_id);
     getchar(); // Clear newline character from buffer
 
-    printf("Enter choice\nA: Activate DND\nD: Deactivate DND\nH: Handle incoming call:\n");
+        printf("=============================\n");
+        printf("A - Activate DND\n");
+        printf("D - Deactivate DND\n");
+        printf("H - Call\n");
+        printf("=============================\n");
+        printf("Enter your choice: ");
+
     scanf("%c", &choice);
     getchar();
 
