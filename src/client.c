@@ -1,4 +1,5 @@
 #include "../include/client_header.h"
+#define PORT 8097
 
 const char *log_levels[] = {
     "FATAL",
@@ -52,7 +53,7 @@ int main() {
         write(client_socket, &client_id, sizeof(client_id));
         write(client_socket, &choice, sizeof(choice));
         write(client_socket, &target_client_id, sizeof(target_client_id));
-    } else {
+    } else if(choice == 'A' || choice == 'D') {
         if (choice == 'A') {
             printf("Enter S for selective & G for global:\n");
             scanf("%c", &global);
@@ -69,6 +70,10 @@ int main() {
         write(client_socket, &choice, sizeof(choice));
         write(client_socket, &global, sizeof(global));
         write(client_socket, &num_groups, sizeof(num_groups));
+    }
+    else{
+        LOG(LOG_LEVEL_FATAL, "Enter Valid Option!\n");
+        exit(EXIT_FAILURE);
     }
 
     // Receive and print messages from the server

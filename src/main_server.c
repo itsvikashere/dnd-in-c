@@ -1,5 +1,7 @@
 #include "../include/server_header.h"
 #include <pthread.h>
+#define PORT 8097
+
 
 const char *log_levels[] = {
     "FATAL",
@@ -61,4 +63,3 @@ int main() {
     close(server_socket);
     return 0;
 }
-

@@ -12,7 +12,6 @@
 #include <stdarg.h>
 #include <pthread.h>  // Include pthread library
 
-#define PORT 8080
 
 enum {
     LOG_LEVEL_FATAL,

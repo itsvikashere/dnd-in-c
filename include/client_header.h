@@ -7,7 +7,6 @@
 #include <unistd.h>
 #include <arpa/inet.h>
 
-#define PORT 8080
 
 extern const char *log_levels[];
 
