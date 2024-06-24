@@ -41,6 +41,12 @@ int main() {
 
     printf("Enter client ID: ");
     scanf("%d", &client_id);
+
+    if(!isdigit(client_id-'a')){
+	LOG(LOG_LEVEL_FATAL, "Please Enter Number Only !\n");
+        exit(EXIT_FAILURE);
+    }
+
     getchar(); // Clear newline character from buffer
 
         printf("=============================\n");

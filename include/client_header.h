@@ -6,7 +6,8 @@
 #include <string.h>
 #include <unistd.h>
 #include <arpa/inet.h>
-
+#include <ctype.h>
+#include <stdbool.h>
 
 extern const char *log_levels[];
 
