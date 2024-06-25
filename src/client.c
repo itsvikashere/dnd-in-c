@@ -42,7 +42,7 @@ int main() {
     printf("Enter client ID: ");
     scanf("%d", &client_id);
 
-    if(!isdigit(client_id-'a')){
+    if(!(client_id >=0 && client_id <=100000)){
 	LOG(LOG_LEVEL_FATAL, "Please Enter Number Only !\n");
         exit(EXIT_FAILURE);
     }
