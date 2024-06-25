@@ -32,6 +32,7 @@ void processCommand(int client_socket);
 void updateFile(int client_socket, FILE *csv_file, int len, int c, int client_id, char choice, int global, char num_groups[]);
 void warningToClient(int client_socket, int c, int choice);
 void *handleClient(void *arg);  // Declare thread function
+void logCall(int caller_id, int receiver_id);
 
 extern pthread_mutex_t file_mutex;
 

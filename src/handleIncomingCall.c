@@ -1,14 +1,13 @@
 #include "../include/server_header.h"
-extern const char *log_levels[];
 
-void handleIncomingCall(int client_socket,int my_id, int client_id) {
+void handleIncomingCall(int client_socket, int my_id, int client_id) {
     FILE *csv_file;
     csv_file = fopen("data.csv", "r");
     if (csv_file == NULL) {
         LOG(LOG_LEVEL_FATAL, "Error opening file!\n");
         exit(1);
     }
-    
+
     char line[256]; // Assuming the maximum line length won't exceed 256 characters
     while (fgets(line, sizeof(line), csv_file)) {
         char *token = strtok(line, ",");
@@ -37,6 +36,7 @@ void handleIncomingCall(int client_socket,int my_id, int client_id) {
                             // If client_id is not in the selective block list
                             sendToClient(client_socket, "Incoming calls allowed\n");
                             fclose(csv_file);
+                            logCall(my_id, client_id); // Log the call
                             return;
                         } else if (token[0] == 'G') {
                             // Global DND mode
@@ -49,11 +49,28 @@ void handleIncomingCall(int client_socket,int my_id, int client_id) {
                 // If 'A' is not followed by 'S' or 'G'
                 sendToClient(client_socket, "Incoming calls allowed\n");
                 fclose(csv_file);
+                logCall(my_id, client_id); // Log the call
                 return;
             }
         }
     }
     sendToClient(client_socket, "This id is not registered\n");
     fclose(csv_file);
+}
+
+void logCall(int caller_id, int receiver_id) {
+    pthread_mutex_lock(&file_mutex);
+
+    FILE *log_file = fopen("call_log.csv", "a");
+    if (log_file == NULL) {
+        LOG(LOG_LEVEL_FATAL, "Error opening call log file!\n");
+        pthread_mutex_unlock(&file_mutex);
+        return;
+    }
+
+    fprintf(log_file, "%d, Caller: %d\n",receiver_id,caller_id);
+    fclose(log_file);
+
+    pthread_mutex_unlock(&file_mutex);
 }
 

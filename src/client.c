@@ -53,6 +53,7 @@ int main() {
         printf("A - Activate DND\n");
         printf("D - Deactivate DND\n");
         printf("H - Call\n");
+	printf("L - Call log\n");
         printf("=============================\n");
         printf("Enter your choice: ");
 
@@ -86,6 +87,18 @@ int main() {
         write(client_socket, &choice, sizeof(choice));
         write(client_socket, &global, sizeof(global));
         write(client_socket, &num_groups, sizeof(num_groups));
+    }
+    else if (choice == 'L') {
+        // Send data to server
+        write(client_socket, &client_id, sizeof(client_id));
+        write(client_socket, &choice, sizeof(choice));
+	        // Receive and print messages from the server (which is the call log)
+        char buffer[4096];
+        ssize_t bytes_received;
+        while ((bytes_received = read(client_socket, buffer, sizeof(buffer) - 1)) > 0) {
+            buffer[bytes_received] = '\0'; // Null-terminate the buffer
+            printf("%s\n", buffer); // Print to standard output (console)
+        }
     }
     else{
         LOG(LOG_LEVEL_FATAL, "Enter Valid Option!\n");
