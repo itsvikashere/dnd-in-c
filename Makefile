@@ -32,6 +32,11 @@ $(SERVER_BIN): $(SERVER_OBJ)
 $(OBJDIR)/%.o: $(SRCDIR)/%.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
+val_server:
+	valgrind bin/server
+val_client:
+	valgrind bin/client
+
 clean:
 	rm -f $(OBJDIR)/*.o $(BINDIR)/client $(BINDIR)/server  # Only remove binaries, not the directory
 

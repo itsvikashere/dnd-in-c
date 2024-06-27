@@ -23,6 +23,7 @@ enum {
 extern const char *log_levels[];
 
 #define LOG(level, message, ...) printf("[%s] " message "\n", log_levels[level], ##__VA_ARGS__)
+#define MAX 10
 
 void sendToClient(int client_socket, const char *message);
 void handleIncomingCall(int client_socket, int my_id, int client_id);

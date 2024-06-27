@@ -112,7 +112,6 @@ int main() {
         buffer[bytes_received] = '\0'; // Null-terminate the buffer
         printf("%s\n", buffer); // Print to standard output (console)
     }
-
     // Close socket
     close(client_socket);
 

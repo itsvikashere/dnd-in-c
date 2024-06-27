@@ -39,7 +39,7 @@ int main() {
         exit(EXIT_FAILURE);
     }
 
-    if (listen(server_socket, 10) < 0) {
+    if (listen(server_socket, MAX) < 0) {
         LOG(LOG_LEVEL_FATAL, "Listen failed!\n");
         exit(EXIT_FAILURE);
     }
